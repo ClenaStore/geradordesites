@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Construtor de Sites</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px}
+    .card{background:#fff;border-radius:8px;box-shadow:0 2px 5px rgba(0,0,0,0.1);padding:20px;margin-bottom:15px}
+    .themes{display:flex;gap:15px;overflow-x:auto}
+    .theme{flex:0 0 200px;border:1px solid #ccc;padding:10px;border-radius:8px;cursor:pointer;text-align:center}
+    iframe{width:100%;height:300px;border:none;margin-top:10px}
+  </style>
+</head>
+<body>
+
+  <h1>Construtor de Sites</h1>
+
+  <div class="card">
+    <h3>Informações do site</h3>
+    <input id="nome" placeholder="Nome do site"><br><br>
+    <input id="slogan" placeholder="Slogan"><br><br>
+    <input id="cor" type="color" value="#4f46e5"><br><br>
+  </div>
+
+  <div class="card">
+    <h3>Escolha um tema</h3>
+    <div class="themes">
+      <div class="theme" onclick="selectTheme('tema1')">Tema 1<br><small>Clean</small></div>
+      <div class="theme" onclick="selectTheme('tema2')">Tema 2<br><small>Dark</small></div>
+      <div class="theme" onclick="selectTheme('tema3')">Tema 3<br><small>Colorido</small></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Pré-visualização</h3>
+    <iframe id="preview"></iframe>
+  </div>
+
+  <button onclick="gerarSite()">Gerar Site</button>
+
+  <script>
+    let temaSelecionado = null;
+
+    function selectTheme(tema){
+      temaSelecionado = tema;
+      atualizarPreview();
+    }
+
+    function atualizarPreview(){
+      const nome = document.getElementById("nome").value || "Meu Site";
+      const slogan = document.getElementById("slogan").value || "Bem-vindo!";
+      const cor = document.getElementById("cor").value;
+      const html = `
+        <html>
+        <head><style>body{font-family:sans-serif;background:${cor};color:#fff;text-align:center;padding:50px}</style></head>
+        <body>
+          <h1>${nome}</h1>
+          <p>${slogan}</p>
+          <small>Tema: ${temaSelecionado || "Nenhum"}</small>
+        </body>
+        </html>`;
+      document.getElementById("preview").srcdoc = html;
+    }
+
+    function gerarSite(){
+      const dados = {
+        nome: document.getElementById("nome").value,
+        slogan: document.getElementById("slogan").value,
+        cor: document.getElementById("cor").value,
+        tema: temaSelecionado
+      };
+
+      // Enviar para Google Sheets
+      fetch("URL_DO_SEU_WEBAPP", {
+        method: "POST",
+        body: JSON.stringify(dados)
+      }).then(r => r.text()).then(res => {
+        alert("Site criado e salvo!");
+      });
+    }
+
+    document.querySelectorAll("input").forEach(inp=>{
+      inp.addEventListener("input", atualizarPreview);
+    });
+  </script>
+</body>
+</html>
